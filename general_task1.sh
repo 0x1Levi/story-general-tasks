@@ -65,9 +65,9 @@ installStory() {
     ls -l
     
     # Verify if the extracted folder exists
-    EXTRACTED_FOLDER=$(ls -d story-linux-$ARCH-*)
-    if [ ! -d "$EXTRACTED_FOLDER" ]; then
-        echo "Extracted folder $EXTRACTED_FOLDER not found. Exiting."
+    EXTRACTED_FOLDER=$(ls -d story-linux-$ARCH-* 2>/dev/null || true)
+    if [ -z "$EXTRACTED_FOLDER" ]; then
+        echo "Extracted folder not found. Exiting."
         return 1
     fi
     
