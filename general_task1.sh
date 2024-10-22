@@ -65,8 +65,13 @@ installGeth() {
     
     sudo rm -f $HOME/go/bin/story-geth
     sudo mv geth-linux-amd64 $HOME/go/bin/story-geth
+    sudo chmod +x $HOME/go/bin/story-geth
     source $HOME/.bash_profile
-    story-geth version
+    
+    if ! sudo -u "$USER" story-geth version; then
+        echo "Failed to execute story-geth. Please check permissions."
+        return 1
+    fi
 }
 
 installStoryConsensus() {
