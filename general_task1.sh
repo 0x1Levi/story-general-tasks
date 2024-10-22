@@ -77,7 +77,7 @@ installStory() {
     fi
     
     rm -f $HOME/go/bin/story
-    mv story-linux-$ARCH $HOME/go/bin/story
+    mv "$EXTRACTED_FOLDER" $HOME/go/bin/story
     chmod +x $HOME/go/bin/story
     source $HOME/.bash_profile
     
