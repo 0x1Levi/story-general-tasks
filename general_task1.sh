@@ -57,6 +57,7 @@ installStory() {
         echo "Failed to execute story. Please check permissions."
         return 1
     fi
+    story version
 }
 
 installGeth() {
