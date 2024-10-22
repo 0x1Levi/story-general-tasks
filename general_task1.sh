@@ -19,10 +19,16 @@ installGo() {
 
 installStory() {
     echo -e "${green}*************Installing Story*************${reset}"
-    STORY_URL=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest |  grep 'browser_download_url' | grep 'story-linux-amd64' | head -n 1 | cut -d '"' -f 4)
+    
+    # Fetch the latest release data
+    RELEASE_DATA=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest)
+    
+    # Extract the URL for the story-linux-amd64 binary
+    STORY_URL=$(echo "$RELEASE_DATA" | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+' | head -n 1)
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
+        return 1
     fi
     
     echo "Fetched Story URL: $STORY_URL"
@@ -30,6 +36,7 @@ installStory() {
     
     if [ ! -f story-linux-amd64 ]; then
         echo "Failed to download Story. Exiting."
+        return 1
     fi
     
     echo "Configuring Story..."
@@ -48,6 +55,7 @@ installStory() {
     
     if ! $HOME/go/bin/story version; then
         echo "Failed to execute story. Please check permissions."
+        return 1
     fi
 }
 
