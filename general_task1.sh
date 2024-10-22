@@ -35,7 +35,7 @@ installStory() {
     RELEASE_DATA=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest)
     
     # Extract the URL for the story binary based on architecture
-    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo "https?://[^ ]+story-linux-$ARCH[^ ]+" | sed 's/......$//')
+    STORY_URL=$(echo "$RELEASE_DATA" | grep 'browser_download_url' | grep "story-linux-$ARCH" | head -n 1 | cut -d '"' -f 4)
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
@@ -56,6 +56,15 @@ installStory() {
     if file story-linux-$ARCH.tar.gz | grep -q 'gzip compressed data'; then
         tar -xzf story-linux-$ARCH.tar.gz
         rm story-linux-$ARCH.tar.gz
+    else
+        echo "Downloaded file is not a valid tar.gz archive. Exiting."
+        return 1
+    fi
+    
+    # Verify if the extracted file exists
+    if [ ! -f story-linux-$ARCH ]; then
+        echo "Extracted file story-linux-$ARCH not found. Exiting."
+        return 1
     fi
     
     chmod +x story-linux-$ARCH
