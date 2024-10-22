@@ -47,31 +47,14 @@ installGeth() {
     fi
     
     echo "Fetched Geth URL: $GETH_URL"
-    wget -qO story-geth.tar.gz "$GETH_URL"
+    wget -qO geth-linux-amd64 "$GETH_URL"
     
-    if [ ! -f story-geth.tar.gz ]; then
+    if [ ! -f geth-linux-amd64 ]; then
         echo "Failed to download Geth. Exiting."
         return 1
     fi
     
-    echo "Extracting and configuring Story Geth..."
-    if ! file story-geth.tar.gz | grep -q 'gzip compressed data'; then
-        echo "Downloaded file is not in gzip format. Exiting."
-        rm -f story-geth.tar.gz
-        return 1
-    fi
-    
-    tar xf story-geth.tar.gz
-    if [ $? -ne 0 ]; then
-        echo "Failed to extract Geth. Exiting."
-        rm -f story-geth.tar.gz
-        return 1
-    fi
-    
-    if [ ! -f geth-linux-amd64 ]; then
-        echo "Failed to extract Geth. Exiting."
-        return 1
-    fi
+    echo "Configuring Story Geth..."
     
     [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
     if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
@@ -81,7 +64,6 @@ installGeth() {
     sudo rm -f $HOME/go/bin/story-geth
     sudo mv geth-linux-amd64 $HOME/go/bin/story-geth
     source $HOME/.bash_profile
-    rm -rf story*/ story-geth.tar.gz
     story-geth version
 }
 
