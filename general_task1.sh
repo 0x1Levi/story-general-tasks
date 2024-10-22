@@ -63,12 +63,12 @@ installGeth() {
         echo 'export PATH=$PATH:$HOME/go/bin' >> $HOME/.bash_profile
     fi
     
-    sudo rm -f $HOME/go/bin/story-geth
-    sudo mv geth-linux-amd64 $HOME/go/bin/story-geth
-    sudo chmod +x $HOME/go/bin/story-geth
+    rm -f $HOME/go/bin/story-geth
+    mv geth-linux-amd64 $HOME/go/bin/story-geth
+    chmod +x $HOME/go/bin/story-geth
     source $HOME/.bash_profile
     
-    if ! sudo -u "$USER" story-geth version; then
+    if ! $HOME/go/bin/story-geth version; then
         echo "Failed to execute story-geth. Please check permissions."
         return 1
     fi
