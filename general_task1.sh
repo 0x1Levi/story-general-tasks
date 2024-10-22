@@ -67,7 +67,7 @@ installStory() {
     #     return 1
     # fi
     
-    chmod +x story-linux-$ARCH
+    # chmod +x story-linux-$ARCH
     
     [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
     if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
