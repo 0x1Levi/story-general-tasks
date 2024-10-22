@@ -64,13 +64,12 @@ installStory() {
     echo "Files in the current directory after extraction:"
     ls -l
     
-    # Verify if the extracted file exists
-    if [ ! -d story-linux-$ARCH ]; then
-        echo "Extracted folder story-linux-$ARCH not found. Exiting."
+    # Verify if the extracted folder exists
+    EXTRACTED_FOLDER=$(ls -d story-linux-$ARCH-*)
+    if [ ! -d "$EXTRACTED_FOLDER" ]; then
+        echo "Extracted folder $EXTRACTED_FOLDER not found. Exiting."
         return 1
     fi
-    
-    # chmod +x story-linux-$ARCH
     
     [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
     if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
