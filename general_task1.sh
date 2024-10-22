@@ -24,7 +24,7 @@ installStory() {
     RELEASE_DATA=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest)
     
     # Extract the URL for the story-linux-amd64 binary
-    STORY_URL=$(echo "$RELEASE_DATA" | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+' | head -n 1)
+    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+' | sed 's/......$//')
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
@@ -104,7 +104,7 @@ installStoryConsensus() {
     RELEASE_DATA=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest)
     
     # Extract the URL for the story-linux-amd64 binary
-    STORY_URL=$(echo "$RELEASE_DATA" | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+' | head -n 1)
+    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+' | sed 's/......$//')
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
