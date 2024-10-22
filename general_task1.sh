@@ -19,7 +19,7 @@ installGo() {
 
 installStory() {
     echo -e "${green}*************Installing Story*************${reset}"
-    STORY_URL=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest | grep 'browser_download_url' | grep 'story-linux-amd64' | head -n 1 | cut -d '"' -f 4)
+    STORY_URL=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+')
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
