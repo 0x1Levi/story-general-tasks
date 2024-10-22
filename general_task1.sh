@@ -35,7 +35,7 @@ installStory() {
     RELEASE_DATA=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest)
     
     # Extract the URL for the story binary based on architecture
-    STORY_URL=$(echo "$RELEASE_DATA" | grep 'browser_download_url' | grep "story-linux-$ARCH" | head -n 1 | cut -d '"' -f 4)
+    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo "https?://[^ ]+story-linux-${ARCH}[^ ]+" | sed 's/......$//')
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
