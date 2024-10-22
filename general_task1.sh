@@ -77,7 +77,8 @@ installStory() {
     fi
     
     # Move the contents of the extracted folder to $HOME/go/bin
-    mv "$EXTRACTED_FOLDER"/* $HOME/go/bin/
+    rm -f $HOME/go/bin/story
+    mv "$EXTRACTED_FOLDER"/* $HOME/go/bin/story
     rm -rf "$EXTRACTED_FOLDER"
     chmod +x $HOME/go/bin/story
     source $HOME/.bash_profile
