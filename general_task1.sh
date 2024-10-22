@@ -32,14 +32,20 @@ installStory() {
     fi
     
     echo "Fetched Story URL: $STORY_URL"
-    wget -qO story-linux-amd64 "$STORY_URL"
+    wget -qO story-linux-amd64.tar.gz "$STORY_URL"
     
-    if [ ! -f story-linux-amd64 ]; then
+    if [ ! -f story-linux-amd64.tar.gz ]; then
         echo "Failed to download Story. Exiting."
         return 1
     fi
     
     echo "Configuring Story..."
+    
+    # Check if the file is a tar.gz archive and extract it
+    if file story-linux-amd64.tar.gz | grep -q 'gzip compressed data'; then
+        tar -xzf story-linux-amd64.tar.gz
+        rm story-linux-amd64.tar.gz
+    fi
     
     chmod +x story-linux-amd64
     
