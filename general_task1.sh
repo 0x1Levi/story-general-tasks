@@ -20,11 +20,22 @@ installGo() {
 installStory() {
     echo -e "${green}*************Installing Story*************${reset}"
     
+    # Detect system architecture
+    ARCH=$(uname -m)
+    if [ "$ARCH" == "x86_64" ]; then
+        ARCH="amd64"
+    elif [[ "$ARCH" == "arm"* || "$ARCH" == "aarch64" ]]; then
+        ARCH="arm64"
+    else
+        echo "Unsupported architecture: $ARCH"
+        return 1
+    fi
+    
     # Fetch the latest release data
     RELEASE_DATA=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest)
     
-    # Extract the URL for the story-linux-amd64 binary
-    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+' | sed 's/......$//')
+    # Extract the URL for the story binary based on architecture
+    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo "https?://[^ ]+story-linux-$ARCH[^ ]+" | sed 's/......$//')
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
@@ -32,9 +43,9 @@ installStory() {
     fi
     
     echo "Fetched Story URL: $STORY_URL"
-    wget -qO story-linux-amd64.tar.gz "$STORY_URL"
+    wget -qO story-linux-$ARCH.tar.gz "$STORY_URL"
     
-    if [ ! -f story-linux-amd64.tar.gz ]; then
+    if [ ! -f story-linux-$ARCH.tar.gz ]; then
         echo "Failed to download Story. Exiting."
         return 1
     fi
@@ -42,12 +53,12 @@ installStory() {
     echo "Configuring Story..."
     
     # Check if the file is a tar.gz archive and extract it
-    if file story-linux-amd64.tar.gz | grep -q 'gzip compressed data'; then
-        tar -xzf story-linux-amd64.tar.gz
-        rm story-linux-amd64.tar.gz
+    if file story-linux-$ARCH.tar.gz | grep -q 'gzip compressed data'; then
+        tar -xzf story-linux-$ARCH.tar.gz
+        rm story-linux-$ARCH.tar.gz
     fi
     
-    chmod +x story-linux-amd64
+    chmod +x story-linux-$ARCH
     
     [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
     if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
@@ -55,7 +66,7 @@ installStory() {
     fi
     
     rm -f $HOME/go/bin/story
-    mv story-linux-amd64 $HOME/go/bin/story
+    mv story-linux-$ARCH $HOME/go/bin/story
     chmod +x $HOME/go/bin/story
     source $HOME/.bash_profile
     
