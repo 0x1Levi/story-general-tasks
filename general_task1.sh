@@ -56,6 +56,8 @@ installGeth() {
     
     echo "Configuring Story Geth..."
     
+    chmod +x geth-linux-amd64
+    
     [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
     if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
         echo 'export PATH=$PATH:$HOME/go/bin' >> $HOME/.bash_profile
