@@ -62,10 +62,10 @@ installStory() {
     fi
     
     # Verify if the extracted file exists
-    if [ ! -f story-linux-$ARCH ]; then
-        echo "Extracted file story-linux-$ARCH not found. Exiting."
-        return 1
-    fi
+    # if [ ! -f story-linux-$ARCH ]; then
+    #     echo "Extracted file story-linux-$ARCH not found. Exiting."
+    #     return 1
+    # fi
     
     chmod +x story-linux-$ARCH
     
