@@ -55,12 +55,16 @@ installGeth() {
     fi
     
     echo "Extracting and configuring Story Geth..."
-    file story-geth.tar.gz
-    
-    if file story-geth.tar.gz | grep -q 'gzip compressed data'; then
-        tar xf story-geth.tar.gz
-    else
+    if ! file story-geth.tar.gz | grep -q 'gzip compressed data'; then
         echo "Downloaded file is not in gzip format. Exiting."
+        rm -f story-geth.tar.gz
+        return 1
+    fi
+    
+    tar xf story-geth.tar.gz
+    if [ $? -ne 0 ]; then
+        echo "Failed to extract Geth. Exiting."
+        rm -f story-geth.tar.gz
         return 1
     fi
     
