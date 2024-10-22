@@ -23,7 +23,6 @@ installStory() {
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
-        exit 1
     fi
     
     echo "Fetched Story URL: $STORY_URL"
@@ -31,7 +30,6 @@ installStory() {
     
     if [ ! -f story-linux-amd64 ]; then
         echo "Failed to download Story. Exiting."
-        exit 1
     fi
     
     echo "Configuring Story..."
@@ -50,7 +48,6 @@ installStory() {
     
     if ! $HOME/go/bin/story version; then
         echo "Failed to execute story. Please check permissions."
-        exit 1
     fi
 }
 
