@@ -126,11 +126,22 @@ installGeth() {
 installStoryConsensus() {
     echo -e "${green}*************Installing Story Consensus*************${reset}"
     
+    # Detect system architecture
+    ARCH=$(uname -m)
+    if [ "$ARCH" == "x86_64" ]; then
+        ARCH="amd64"
+    elif [[ "$ARCH" == "arm"* || "$ARCH" == "aarch64" ]]; then
+        ARCH="arm64"
+    else
+        echo "Unsupported architecture: $ARCH"
+        return 1
+    fi
+    
     # Fetch the latest release data
     RELEASE_DATA=$(curl -s https://api.github.com/repos/piplabs/story/releases/latest)
     
-    # Extract the URL for the story-linux-amd64 binary
-    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo 'https?://[^ ]+story-linux-amd64[^ ]+' | sed 's/......$//')
+    # Extract the URL for the story binary based on architecture
+    STORY_URL=$(echo "$RELEASE_DATA" | grep 'body' | grep -Eo "https?://[^ ]+story-linux-${ARCH}[^ ]+" | sed 's/......$//')
     
     if [ -z "$STORY_URL" ]; then
         echo "Failed to fetch Story URL. Exiting."
@@ -138,31 +149,40 @@ installStoryConsensus() {
     fi
     
     echo "Fetched Story URL: $STORY_URL"
-    wget -qO story-linux-amd64 "$STORY_URL"
+    wget -qO story-linux-$ARCH.tar.gz "$STORY_URL"
     
-    if [ ! -f story-linux-amd64 ]; then
+    if [ ! -f story-linux-$ARCH.tar.gz ]; then
         echo "Failed to download Story. Exiting."
         return 1
     fi
     
-    echo "Extracting and configuring Story..."
+    echo "Configuring Story..."
     
-    chmod +x story-linux-amd64
+    # Check if the file is a tar.gz archive and extract it
+    if file story-linux-$ARCH.tar.gz | grep -q 'gzip compressed data'; then
+        tar -xzf story-linux-$ARCH.tar.gz
+        rm story-linux-$ARCH.tar.gz
+    else
+        echo "Downloaded file is not a valid tar.gz archive. Exiting."
+        return 1
+    fi
+    
+    # Verify if the extracted folder exists
+    EXTRACTED_FOLDER=$(ls -d story-linux-$ARCH-* 2>/dev/null || true)
+    if [ -z "$EXTRACTED_FOLDER" ]; then
+        echo "Extracted folder not found. Exiting."
+        return 1
+    fi
     
     [ ! -d "$HOME/go/bin" ] && mkdir -p $HOME/go/bin
     if ! grep -q "$HOME/go/bin" $HOME/.bash_profile; then
         echo 'export PATH=$PATH:$HOME/go/bin' >> $HOME/.bash_profile
     fi
     
-    # Remove the existing symbolic link if it exists
-    if [ -L /usr/local/bin/story ]; then
-        sudo rm $HOME/go/bin/story
-    fi
-    
-    sudo cp -f story-linux-amd64 $HOME/go/bin/story
-    sudo rm -f /usr/bin/story
-    sudo ln -sf $HOME/go/bin/story /usr/local/bin/story
-    rm -f story-linux-amd64
+    # Move the contents of the extracted folder to $HOME/go/bin
+    sudo rm -rf $HOME/go/bin/story
+    sudo mv "$EXTRACTED_FOLDER"/* $HOME/go/bin/story
+    rm -rf "$EXTRACTED_FOLDER"
     source $HOME/.bash_profile
     
     if ! $HOME/go/bin/story version; then
