@@ -60,6 +60,9 @@ installStory() {
         echo "Downloaded file is not a valid tar.gz archive. Exiting."
         return 1
     fi
+
+    echo "Files in the current directory after extraction:"
+    ls -l
     
     # Verify if the extracted file exists
     if [ ! -d story-linux-$ARCH ]; then
