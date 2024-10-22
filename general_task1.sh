@@ -7,14 +7,30 @@ reset="\e[0m"
 # Functions
 installGo() {
     echo -e "${green}*************Installing Go*************${reset}"
-    wget https://go.dev/dl/go1.23.2.linux-amd64.tar.gz
-    sudo tar -C /usr/local -xzf go1.23.2.linux-amd64.tar.gz
-    sudo rm -f go1.23.2.linux-amd64.tar.gz
+    
+    # Fetch the latest Go version
+    LATEST_GO_VERSION=$(curl -s https://go.dev/VERSION?m=text)
+    
+    # Construct the download URL
+    GO_ARCHIVE="${LATEST_GO_VERSION}.linux-amd64.tar.gz"
+    DOWNLOAD_URL="https://go.dev/dl/${GO_ARCHIVE}"
+    
+    # Download the latest Go version
+    wget $DOWNLOAD_URL
+    
+    # Extract and install Go
+    sudo tar -C /usr/local -xzf $GO_ARCHIVE
+    sudo rm -f $GO_ARCHIVE
+    
+    # Update environment variables
     echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
     echo 'export GOPATH=$HOME/go' >> ~/.profile
     echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.profile
     source ~/.profile
+    
+    # Verify the installation
     go version
+    echo -e "${green}Go successfully installed! Version: $(go version)${reset}"
 }
 
 installStory() {
