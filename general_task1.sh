@@ -55,7 +55,14 @@ installGeth() {
     fi
     
     echo "Extracting and configuring Story Geth..."
-    tar xf story-geth.tar.gz
+    file story-geth.tar.gz
+    
+    if file story-geth.tar.gz | grep -q 'gzip compressed data'; then
+        tar xf story-geth.tar.gz
+    else
+        echo "Downloaded file is not in gzip format. Exiting."
+        return 1
+    fi
     
     if [ ! -f geth-linux-amd64 ]; then
         echo "Failed to extract Geth. Exiting."
