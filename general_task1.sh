@@ -60,9 +60,6 @@ installStory() {
         echo "Downloaded file is not a valid tar.gz archive. Exiting."
         return 1
     fi
-
-    echo "Files in the current directory after extraction:"
-    ls -l
     
     # Verify if the extracted folder exists
     EXTRACTED_FOLDER=$(ls -d story-linux-$ARCH-* 2>/dev/null || true)
@@ -77,10 +74,9 @@ installStory() {
     fi
     
     # Move the contents of the extracted folder to $HOME/go/bin
-    rm -f $HOME/go/bin/story
-    mv "$EXTRACTED_FOLDER"/* $HOME/go/bin/story
+    sudo rm -f $HOME/go/bin/story
+    sudo mv "$EXTRACTED_FOLDER"/* $HOME/go/bin/story
     rm -rf "$EXTRACTED_FOLDER"
-    chmod +x $HOME/go/bin/story
     source $HOME/.bash_profile
     
     if ! $HOME/go/bin/story version; then
