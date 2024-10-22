@@ -202,9 +202,17 @@ autoUpdateStory() {
     git clone https://github.com/piplabs/story && \
     cd $HOME/story && \
     latest_branch=$(git branch -r | grep -o 'origin/[^ ]*' | grep -v 'HEAD' | tail -n 1 | cut -d '/' -f 2) && \
+    if [ -z "$latest_branch" ]; then
+        echo "No branches found in the repository. Exiting."
+        return 1
+    fi
     git checkout $latest_branch && \
     go build -o story ./client && \
-    old_bin_path=$(which story) && \
+    old_bin_path=$(which story || true) && \
+    if [ -z "$old_bin_path" ]; then
+        echo "Story binary not found in PATH. Exiting."
+        return 1
+    fi
     home_path=$HOME && \
     rpc_port=$(grep -m 1 -oP '^laddr = "\K[^"]+' "$HOME/.story/story/config/config.toml" | cut -d ':' -f 3) && \
     [[ -z "$rpc_port" ]] && rpc_port=$(grep -oP 'node = "tcp://[^:]+:\K\d+' "$HOME/.story/story/config/client.toml") ; \
